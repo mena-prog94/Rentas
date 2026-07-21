@@ -1,0 +1,107 @@
+/* ==========================================
+   Header y Toolbar (Transparente para integrarse)
+   ========================================== */
+ion-header {
+  background: #0f172a;
+}
+
+ion-toolbar {
+  --background: transparent;
+  --color: #ffffff;
+  --border-style: none;
+  padding: 0.5rem 0.5rem 0;
+}
+
+ion-title {
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: -0.5px;
+}
+
+/* ==========================================
+   Contenido y Fondo General
+   ========================================== */
+ion-content {
+  --background: radial-gradient(circle at top right, #1e293b 0%, #0f172a 100%);
+  --color: #ffffff;
+}
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.avatar-box {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+
+  ion-avatar {
+    width: 150px !important;
+    height: 150px !important;
+    border: 2px solid var(--ion-color-primary);
+    cursor: pointer;
+    
+    img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      display: block;
+    }
+  }
+
+  .edit-avatar-icon {
+    position: absolute;
+    bottom: 50px;
+    right: 0;
+    background: var(--ion-color-primary);
+    color: white;
+    padding: 8px;
+    border-radius: 50%;
+    font-size: 20px;
+  }
+}
+
+.profile-info-list {
+  width: 100%;
+  padding: 0 20px; // Añade espacio lateral para que no toque los bordes de la tarjeta
+ --background: transparent !important; 
+  margin-bottom: 20px;
+
+  ion-item {
+    // Fondo gris oscuro sólido
+           // Texto blanco
+    --border-radius: 12px;           // Bordes redondeados
+    --min-height: 50px;              // Altura cómoda
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2); // Sombra suave para darle profundidad
+    
+    ion-icon {
+      color: #9e9e9e !important;     // Icono gris claro
+      margin-right: 15px;            // Separación entre icono y texto
+    }
+
+    ion-label {
+      font-size: 0.95rem;            // Tamaño de letra legible
+      white-space: nowrap;           // Evita que el correo se rompa en varias líneas
+      overflow: hidden;
+      text-overflow: ellipsis;  
+        // Si es muy largo, muestra "..."
+    }
+  }
+}
+
+/* Asegura que el avatar siempre tenga tamaño, incluso si la imagen tarda */
+ion-avatar {
+  min-width: 150px !important;
+  min-height: 150px !important;
+  background-color: #333; // Color de fondo si no hay imagen
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+h2 { color: white; }

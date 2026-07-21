@@ -1,0 +1,201 @@
+/* ==========================================================================
+   Contenedor Principal del Menú (Estilo Dark Premium)
+   ========================================================================== */
+ion-menu {
+  --background: #0f172a; /* Fondo ultra oscuro a juego con tu app */
+  --width: 280px;
+
+  ion-content {
+    --background: #0f172a;
+    --padding-start: 8px;
+    --padding-end: 8px;
+  }
+}
+
+/* Lista contenedora */
+#inbox-list {
+  background: transparent;
+  padding-top: 24px;
+}
+
+/* ==========================================================================
+   Encabezado del Menú
+   ========================================================================== */
+ion-list-header {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+  padding-left: 16px;
+  margin-bottom: 4px;
+}
+
+ion-note {
+  font-size: 0.85rem;
+  color: #64748b; /* Gris azulado sutil */
+  padding-left: 16px;
+  display: block;
+  margin-bottom: 24px;
+}
+
+/* Separador horizontal sutil */
+.menu-divider {
+  border: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.05);
+  margin: 16px 8px;
+}
+
+/* ==========================================================================
+   Estilos de los Ítems del Menú (Normales y Desplegables)
+   ========================================================================== */
+ion-item {
+  --background: transparent;
+  --color: #94a3b8; /* Gris intermedio por defecto */
+  --border-radius: 12px;
+  --padding-start: 12px;
+  --inner-padding-end: 12px;
+  
+  font-weight: 600;
+  margin-bottom: 6px;
+  height: 48px;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+
+  /* Color de los iconos por defecto */
+  ion-icon {
+    font-size: 1.25rem;
+    transition: transform 0.2s ease-in-out;
+  }
+}
+
+/* Efecto hover al pasar el ratón/dedo */
+ion-item:hover {
+  --background: rgba(255, 255, 255, 0.03);
+  --color: #ffffff;
+}
+
+/* ==========================================================================
+   Ítem Activo (Página seleccionada actual)
+   ========================================================================== */
+.active-item {
+  --background: rgba(56, 189, 248, 0.08) !important; /* Azul cyan sutil traslúcido */
+  --color: #38bdf8 !important; /* Texto cyan brillante */
+  border-left: 3px solid #38bdf8;
+  border-radius: 0 12px 12px 0; /* Bordes redondeados respetando el indicador izquierdo */
+  font-weight: 700;
+
+  ion-icon {
+    color: #38bdf8 !important;
+  }
+}
+
+/* ==========================================================================
+   Efectos específicos para el Acordeón / Submenú
+   ========================================================================== */
+.submenu-container {
+  padding-left: 12px; /* Sangría interna para dar jerarquía visual */
+  margin-top: 2px;
+  margin-bottom: 8px;
+  border-left: 1px dashed rgba(255, 255, 255, 0.1); /* Línea guía vertical */
+  margin-left: 22px; 
+}
+
+/* Ítems internos del submenú */
+.submenu-item {
+  --background: transparent;
+  --color: #94a3b8;
+  height: 42px; /* Ligeramente más compactos */
+  font-size: 0.9rem;
+  
+  ion-icon {
+    font-size: 1.1rem;
+    color: #64748b;
+  }
+}
+
+/* Estilo especial para "+ Registrar Nueva" */
+.add-new-item {
+  --color: #38bdf8; /* Resalta en cyan */
+  
+  ion-icon {
+    color: #38bdf8;
+  }
+  
+  &:hover {
+    --background: rgba(56, 189, 248, 0.05);
+  }
+}
+.welcome-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+.welcome-text {
+  flex: 1;
+}
+
+.welcome-header h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 0.5rem;
+}
+
+.welcome-header p {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ==========================================
+   Botón de Salida Integrado (Estilo Premium)
+   ========================================== */
+.dashboard-logout-btn {
+  background: rgba(244, 63, 94, 0.06); /* Fondo coral muy suave */
+  color: #f43f5e;
+  border: 1px solid rgba(244, 63, 94, 0.15);
+  padding: 10px 16px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+  white-space: nowrap; /* Evita que el texto se rompa en dos líneas */
+}
+
+.dashboard-logout-btn ion-icon {
+  font-size: 1.15rem;
+}
+
+/* Hover e interactividad */
+.dashboard-logout-btn:hover {
+  background: rgba(244, 63, 94, 0.12);
+  border-color: rgba(244, 63, 94, 0.35);
+  box-shadow: 0 4px 15px rgba(244, 63, 94, 0.15);
+}
+
+.dashboard-logout-btn:active {
+  transform: scale(0.96);
+}
+
+/* Adaptación para pantallas pequeñas de celular */
+@media (max-width: 576px) {
+  .welcome-header {
+    flex-direction: column;
+    align-items: stretch; /* El botón ocupará el ancho completo en móvil */
+    gap: 16px;
+  }
+  
+  .dashboard-logout-btn {
+    justify-content: center;
+  }
+}

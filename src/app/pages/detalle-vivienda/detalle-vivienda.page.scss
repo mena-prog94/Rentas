@@ -1,0 +1,98 @@
+.vivienda-card {
+  background: #1e293b;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  margin: 0;
+}
+
+.header-inline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.titulo-codigo {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.sub-tipo {
+  color: #38bdf8;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Badges de Estado */
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.badge-disponible {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+.badge-rentada {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+
+/* Items internos */
+.info-item {
+  --background: transparent;
+  --padding-start: 0;
+  margin-bottom: 16px;
+
+  h3 {
+    color: #64748b;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .text-white {
+    color: #f1f5f9;
+  }
+
+  .text-price {
+    color: #4ade80;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+}
+
+/* Grid de Características */
+.features-grid {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  margin-bottom: 24px;
+}
+
+.feature-box {
+  flex: 1;
+  background: #0f172a;
+  padding: 12px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.02);
+
+  ion-icon {
+    font-size: 1.5rem;
+  }
+
+  span {
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+}

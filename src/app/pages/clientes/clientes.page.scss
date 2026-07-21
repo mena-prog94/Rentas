@@ -1,0 +1,253 @@
+/* ==========================================
+   Header y Toolbar Personalizados
+   ========================================== */
+ion-header {
+  background: #0f172a;
+}
+
+ion-toolbar {
+  --background: #0f172a;
+  --color: #ffffff;
+  --border-style: none;
+  padding: 0.5rem 0.5rem 0;
+}
+
+ion-title {
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: -0.5px;
+  color: #ffffff;
+}
+
+ion-menu-button {
+  --color: #38bdf8; /* Azul cyan moderno para clientes */
+}
+
+/* ==========================================
+   Contenido y Fondo General
+   ========================================== */
+ion-content {
+  --background: radial-gradient(circle at top right, #1e293b 0%, #0f172a 100%);
+  --color: #ffffff;
+}
+
+/* ==========================================
+   Sección del Encabezado del Formulario
+   ========================================== */
+.form-header {
+  text-align: center;
+  margin-top: 1rem;
+  margin-bottom: 2.5rem;
+  animation: fadeInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.form-icon {
+  font-size: 3.5rem;
+  color: #38bdf8; /* Azul cyan */
+  filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.4));
+  animation: pulseIcon 4s ease-in-out infinite;
+  margin-bottom: 0.5rem;
+}
+
+@keyframes pulseIcon {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.form-header p {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  line-height: 1.5;
+  margin: 0 auto;
+  max-width: 320px;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================
+   Estructura en Fila (Grid Flexible)
+   ========================================== */
+.ion-row-flex {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.half-width {
+  flex: 1;
+}
+
+/* ==========================================
+   Campos de Entrada (Labels, Inputs, Selects, Textareas)
+   ========================================== */
+.custom-input {
+  --background: rgba(255, 255, 255, 0.05);
+  --color: #ffffff;
+  --placeholder-color: #64748b;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --highlight-color-focused: transparent; /* Eliminamos línea por defecto */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  margin-bottom: 1.25rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Reset y diseño personalizado para el Label interno */
+.custom-input ion-label {
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  color: #94a3b8 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-top: 12px !important;
+  margin-bottom: 6px !important;
+  transition: color 0.3s ease !important;
+}
+
+/* Espaciado de controles internos */
+.custom-input ion-input,
+.custom-input ion-select,
+.custom-input ion-textarea {
+  --padding-bottom: 12px;
+  --padding-top: 4px;
+}
+
+/* Ajuste específico para el componente select */
+.custom-input ion-select {
+  --placeholder-color: #64748b;
+  --placeholder-opacity: 1;
+  width: 100%;
+  .rentada-color {
+  color: #f43f5e !important;
+  font-weight: bold !important;
+}
+}
+
+/* Estado de Foco (Focus) - Brillo e iluminación interactiva */
+.custom-input:focus-within {
+  border-color: #38bdf8; /* Brillo azul cyan */
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.custom-input:focus-within ion-label {
+  color: #38bdf8 !important;
+}
+
+/* ==========================================
+   Botón Dinámico con Efecto Glow Azul
+   ========================================== */
+.btn-success {
+  --background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+  --background-hover: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
+  --border-radius: 14px;
+  --box-shadow: none;
+  font-weight: 700;
+  font-size: 1rem;
+  height: 52px;
+  margin-top: 1.8rem;
+  position: relative;
+  overflow: visible; /* Necesario para proyectar el brillo exterior */
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* Generamos el efecto "Glow" translúcido por detrás */
+.btn-success::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+  border-radius: 14px;
+  filter: blur(15px);
+  opacity: 0.4;
+  z-index: -1;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+/* Interacciones físicas al interactuar */
+.btn-success:hover {
+  transform: translateY(-2px);
+}
+
+.btn-success:hover::after {
+  opacity: 0.7;
+  filter: blur(18px);
+}
+
+.btn-success:active {
+  transform: translateY(1px);
+}
+
+/* Botón deshabilitado cuando el formulario es inválido */
+.btn-success[disabled] {
+  --background: #334155;
+  opacity: 0.5;
+  pointer-events: none;
+  transform: none;
+}
+
+.btn-success[disabled]::after {
+  display: none;
+}
+.contrato-upload-container {
+  margin-top: 15px;
+  
+  .upload-label {
+    font-size: 0.9rem;
+    color: #a0a0a0;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .upload-box {
+    border: 2px dashed #444;
+    border-radius: 8px;
+    background: #1e1e1e;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: var(--ion-color-primary);
+      background: #242424;
+    }
+
+    .upload-icon {
+      font-size: 2.5rem;
+      color: var(--ion-color-primary);
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: #ccc;
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    .success-upload-text {
+      color: var(--ion-color-success);
+      font-weight: bold;
+    }
+  }
+}
+
+.ion-margin-top-double {
+  margin-top: 25px;
+}
+.option-rentada {
+  color: var(--ion-color-danger, #eb444a) !important;
+}
+
+/* Opcional global si usas action-sheet nativo/web component */
+::ng-deep .action-sheet-button.option-rentada {
+  color: var(--ion-color-danger, #eb444a) !important;
+}

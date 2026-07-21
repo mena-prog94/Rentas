@@ -1,0 +1,107 @@
+/* ==========================================
+   Configuración General de Página
+   ========================================== */
+ion-content {
+  --background: #0f172a;
+  --padding-bottom: 20px;
+}
+
+/* ==========================================
+   Header de la página
+   ========================================== */
+ion-toolbar {
+  --background: var(--ion-color-primary);
+  --color: rgba(255, 255, 255, 0.05);
+}
+
+ion-title {
+  font-weight: 800;
+}
+
+/* ==========================================
+   Lista y Tarjetas
+   ========================================== */
+.recibos-list {
+  background: transparent;
+  padding: 16px;
+}
+
+.header-section {
+  margin-bottom: 20px;
+  h2 { font-weight: bold; margin-bottom: 5px; color: var(--ion-color-dark); }
+  p { margin: 0; color: var(--ion-color-medium); font-size: 0.9rem; }
+}
+
+/* --- Estilo de Tarjeta Unificado --- */
+.recibo-card {
+  margin: 0 0 16px 0;
+  border-radius: 12px;
+  background: #09181f; 
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--ion-color-step-150);
+  border-left: 5px solid transparent;
+
+  /* Indicadores de estado */
+  &:has(ion-badge[color="success"]) { border-left-color: var(--ion-color-success); }
+  &:has(ion-badge[color="warning"]) { border-left-color: var(--ion-color-warning); }
+  &:has(ion-badge[color="danger"]) { border-left-color: var(--ion-color-danger); }
+
+  ion-card-content {
+    padding: 16px;
+  }
+}
+
+/* --- Estructura de la Tarjeta --- */
+.card-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed var(--ion-color-step-200);
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+
+  .recibo-meta {
+    display: flex;
+    flex-direction: column;
+    .recibo-id { font-weight: bold; color: var(--ion-color-step-800); font-size: 0.95rem; }
+    .recibo-fecha { font-size: 0.8rem; color: var(--ion-color-step-500); }
+  }
+}
+
+.card-body {
+  h3 { margin: 0 0 4px 0; font-size: 1.1rem; font-weight: 700; color: var(--ion-color-step-900); }
+  p { margin: 0 0 12px 0; font-size: 0.9rem; color: var(--ion-color-step-600); }
+  
+  .monto-texto {
+    margin: 0; font-size: 1.5rem; font-weight: 800; color: var(--ion-color-primary);
+    span { font-size: 1rem; }
+  }
+}
+
+/* --- Acciones --- */
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+  border-top: 1px solid var(--ion-color-step-100);
+  padding-top: 8px;
+
+  ion-button {
+    font-weight: bold;
+    --padding-start: 8px;
+    --padding-end: 8px;
+  }
+}
+
+/* ==========================================
+   Estado No Encontrado
+   ========================================== */
+.error-container {
+  padding: 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: var(--ion-color-medium);
+}

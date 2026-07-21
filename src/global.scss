@@ -35,3 +35,193 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+/* ==========================================================
+   ESTILO GLOBAL: FUERZA TEMA CLARO Y COHERENCIA VISUAL
+   ========================================================== */
+/* --- FUERZA TOTAL A TODO EL SISTEMA --- */
+/* --- RESET GLOBAL PARA MODO CLARO --- */
+/* ==========================================
+   Header y Toolbar
+   ========================================== */
+ion-header {
+  background: #0f172a;
+}
+
+ion-toolbar {
+  --background: #0f172a;
+  --color: #ffffff;
+  --border-style: none;
+  padding: 0.5rem 0.5rem 0;
+}
+
+ion-title {
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: -0.5px;
+  color: #ffffff;
+}
+
+ion-back-button {
+  --color: #38bdf8;
+}
+
+/* ==========================================
+   Fondo General
+   ========================================== */
+ion-content {
+  --background: radial-gradient(circle at top right, #1e293b 0%, #0f172a 100%);
+  --color: #ffffff;
+}
+
+/* ==========================================
+   Tarjeta de Estado del Recibo
+   ========================================== */
+.status-card {
+  background: rgba(30, 41, 59, 0.6); /* Oscuro translúcido */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  text-align: center;
+  padding: 1.5rem;
+  margin: 1rem;
+}
+
+.status-card h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0.5rem 0;
+}
+
+.status-card .recibo-code {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+/* ==========================================
+   Secciones y Títulos
+   ========================================== */
+.section-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 2rem 1rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ==========================================
+   Tarjetas de Información
+   ========================================== */
+.info-card {
+  background: rgba(30, 41, 59, 0.6); /* Oscuro translúcido */
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 0.8rem 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.info-card ion-item {
+  --background: transparent;
+  --color: #ffffff;
+}
+
+.info-card ion-label p {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+.info-card ion-label h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* ==========================================
+   Estado del Pago
+   ========================================== */
+.estado-container {
+  background: rgba(56, 189, 248, 0.25);/* Oscuro translúcido */
+  border-radius: 18px;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  margin: 1rem;
+  padding: 0.5rem;
+}
+
+/* ==========================================
+   Botones de Acción
+   ========================================== */
+.action-buttons {
+  padding: 1.5rem;
+}
+
+.btn-action {
+  --border-radius: 12px;
+  height: 50px;
+  font-weight: 700;
+  --background: #38bdf8;
+  --color: #ffffff;
+  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.25);
+  transition: transform 0.2s ease;
+}
+
+.btn-action:hover {
+  transform: translateY(-3px);
+}
+
+/* En src/theme/global.scss */
+.rentada-color {
+  color: #f43f5e !important;
+  font-weight: bold !important;
+}
+.custom-input {
+  --background: rgba(255, 255, 255, 0.05);
+ 
+  --placeholder-color: #64748b;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 4px;
+}
+
+/* Estado de Foco (Focus) */
+.custom-input:focus-within {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.custom-input:focus-within + .center-label {
+  color: #38bdf8;
+}
+/* ==========================================
+   Configuración General de Página
+   ========================================== */
+ion-content {
+  --background: #0f172a;/* Fondo claro profesional */
+  --padding-bottom: 20px;
+}
+
+/* ==========================================
+   Header de la página
+   ========================================== */
+ion-toolbar {
+  --background: var(--ion-color-primary);
+  --color: #ffffff;
+}
+
+ion-title {
+  font-weight: 800;
+}
+

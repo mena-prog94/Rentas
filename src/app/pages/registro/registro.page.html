@@ -1,0 +1,43 @@
+<ion-header class="ion-no-border">
+  <!-- Agregamos color="primary" o "light" para forzar el esquema de color -->
+  <ion-toolbar color="primary"> 
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/login" color="light"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Registro</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding auth-background">
+  <div class="auth-container">
+    <div class="logo-section">
+      <h2>Crear Cuenta</h2>
+      <p>Regístrate para empezar a gestionar tus rentas y recibos.</p>
+    </div>
+
+    <form [formGroup]="registroForm" (ngSubmit)="onRegistro()">
+      <ion-item lines="none" class="custom-input">
+        <ion-label position="stacked">Nombre Completo</ion-label>
+        <ion-input formControlName="nombre" type="text" placeholder="Tu Nombre"></ion-input>
+      </ion-item>
+
+      <ion-item lines="none" class="custom-input">
+        <ion-label position="stacked">Correo Electrónico</ion-label>
+        <ion-input formControlName="email" type="email" placeholder="correo@ejemplo.com"></ion-input>
+      </ion-item>
+
+      <ion-item lines="none" class="custom-input">
+        <ion-label position="stacked">Contraseña</ion-label>
+        <ion-input formControlName="password" type="password" placeholder="••••••••"></ion-input>
+      </ion-item>
+
+      <ion-button expand="block" type="submit" [disabled]="!registroForm.valid" class="btn-primary ion-margin-top">
+        Registrarme
+      </ion-button>
+    </form>
+
+    <div class="auth-footer">
+      <p>¿Ya tienes cuenta? <a routerLink="/login">Inicia Sesión</a></p>
+    </div>
+  </div>
+</ion-content>

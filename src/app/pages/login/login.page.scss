@@ -1,0 +1,219 @@
+/* ==========================================
+   Contenedor Principal y Fondo (Centralizado)
+   ========================================== */
+.auth-background {
+  --background: radial-gradient(circle at top right, #1e293b 0%, #0f172a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Animación de entrada */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================
+   Sección del Logo y Encabezado
+   ========================================== */
+.logo-section {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.app-logo {
+  font-size: 3.5rem;
+  color: #38bdf8; /* Azul cyan moderno */
+  filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.4));
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.logo-section h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0.8rem 0 0.4rem;
+  letter-spacing: -0.5px;
+}
+
+.logo-section p {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* ==========================================
+   Campos de Entrada (Labels e Inputs)
+   ========================================== */
+.input-wrapper {
+  margin-bottom: 1.25rem;
+}
+
+.center-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-bottom: 0.5rem;
+  margin-left: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease;
+}
+
+/* Contenedor del input estilo píldora interactiva */
+.custom-input {
+  --background: rgba(255, 255, 255, 0.05);
+ 
+  --placeholder-color: #64748b;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 4px;
+}
+
+/* Estado de Foco (Focus) */
+.custom-input:focus-within {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.custom-input:focus-within + .center-label {
+  color: #38bdf8;
+}
+
+/* Mensajes de Error */
+.error-message {
+  font-size: 0.75rem;
+  color: #f87171;
+  margin-top: -8px;
+  margin-bottom: 12px;
+  margin-left: 8px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================
+   Botón Dinámico de Acción con Efecto Glow
+   ========================================== */
+.btn-primary {
+  --background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+  --background-hover: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
+  --border-radius: 14px;
+  --box-shadow: none;
+  font-weight: 700;
+  font-size: 1rem;
+  height: 52px;
+  margin-top: 1.5rem;
+  position: relative;
+  overflow: visible; /* Permitir que el brillo sobresalga */
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* Texto del botón */
+.btn-text {
+  position: relative;
+  z-index: 2;
+  letter-spacing: 0.5px;
+}
+
+/* Efecto Brillo (Glow) detrás del botón */
+.btn-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+  border-radius: 14px;
+  filter: blur(15px);
+  opacity: 0.4;
+  z-index: 1;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+/* Dinámicas del botón en Hover y Active */
+.btn-primary:hover {
+  transform: translateY(-2px);
+}
+
+.btn-primary:hover .btn-glow {
+  opacity: 0.7;
+  filter: blur(18px);
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+}
+
+/* Estilo cuando el formulario es inválido y el botón está deshabilitado */
+.btn-primary[disabled] {
+  --background: #334155;
+  opacity: 0.5;
+  pointer-events: none;
+  transform: none;
+}
+
+.btn-primary[disabled] .btn-glow {
+  display: none;
+}
+
+/* ==========================================
+   Footer (Enlaces de Navegación)
+   ========================================== */
+.auth-footer {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.auth-footer p {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.auth-footer a {
+  color: #38bdf8;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.auth-footer a:hover {
+  color: #0ea5e9;
+  text-decoration: underline;
+}

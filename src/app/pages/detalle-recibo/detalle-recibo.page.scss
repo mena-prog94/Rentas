@@ -1,0 +1,160 @@
+/* ==========================================
+   Header y Toolbar
+   ========================================== */
+ion-header {
+  background: #0f172a;
+}
+
+ion-toolbar {
+  --background: #0f172a;
+  --color: #ffffff;
+  --border-style: none;
+  padding: 0.5rem 0.5rem 0;
+}
+
+ion-title {
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: -0.5px;
+  color: #ffffff;
+}
+
+ion-back-button {
+  --color: #38bdf8;
+}
+
+/* ==========================================
+   Fondo General
+   ========================================== */
+ion-content {
+  --background: radial-gradient(circle at top right, #1e293b 0%, #0f172a 100%);
+  --color: #ffffff;
+}
+
+/* ==========================================
+   Tarjeta de Estado del Recibo
+   ========================================== */
+.status-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  text-align: center;
+  padding: 1.5rem;
+  margin: 1rem;
+}
+
+.status-card h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0.5rem 0;
+}
+
+.status-card .recibo-code {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+/* ==========================================
+   Secciones y Títulos
+   ========================================== */
+.section-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 2rem 1rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ==========================================
+   Tarjetas de Información
+   ========================================== */
+.info-card {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 0.8rem 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+}
+
+.info-card ion-item {
+  --background: transparent;
+  --color: #ffffff;
+}
+
+.info-card ion-label p {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+.info-card ion-label h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* ==========================================
+   Estado del Pago
+   ========================================== */
+.estado-container {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 1rem;
+  padding: 0.5rem;
+}
+
+/* ==========================================
+   Botones de Acción
+   ========================================== */
+.action-buttons {
+  padding: 1.5rem;
+}
+
+.btn-action {
+  --border-radius: 12px;
+  height: 50px;
+  font-weight: 700;
+  --background: #38bdf8;
+  --color: #ffffff;
+  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.25);
+  transition: transform 0.2s ease;
+}
+
+.btn-action:hover {
+  transform: translateY(-3px);
+}
+/* Estilo para que la firma solo salga en impresión */
+.only-print { display: none; }
+
+@media print {
+  .no-print { display: none !important; }
+  
+  .only-print {
+    display: block !important;
+    margin-top: 60px;
+    text-align: center;
+    .signature-line {
+      border-top: 1px solid #000;
+      width: 250px;
+      margin: 0 auto 10px auto;
+    }
+  }
+
+  // Opcional: quitar sombras y bordes de las cards al imprimir
+  ion-card {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+}

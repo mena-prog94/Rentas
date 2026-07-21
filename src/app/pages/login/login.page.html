@@ -1,0 +1,41 @@
+<ion-content class="ion-padding auth-background">
+  <div class="auth-container">
+    
+    <div class="logo-section">
+      <ion-icon name="business-outline" class="app-logo"></ion-icon>
+      <h2>AutoGestor Rentas</h2>
+      <p>Bienvenido de nuevo. Inicia sesión para continuar.</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+      
+      <div class="input-wrapper">
+        <ion-label class="center-label">Correo Electrónico</ion-label>
+        <ion-item lines="none" class="custom-input">
+          <ion-input formControlName="email" type="email" placeholder="correo@ejemplo.com"></ion-input>
+        </ion-item>
+      </div>
+      <div class="error-message" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
+        Ingresa un correo electrónico válido.
+      </div>
+
+      <div class="input-wrapper">
+        <ion-label class="center-label">Contraseña</ion-label>
+        <ion-item lines="none" class="custom-input">
+          <ion-input formControlName="password" type="password" placeholder="••••••••"></ion-input>
+        </ion-item>
+      </div>
+      <div class="error-message" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+        La contraseña debe tener al menos 6 caracteres.
+      </div>
+
+      <ion-button expand="block" type="submit" [disabled]="!loginForm.valid" class="btn-primary ion-margin-top">
+        <span class="btn-text">Ingresar</span>
+        <div class="btn-glow"></div> </ion-button>
+    </form>
+
+    <div class="auth-footer">
+      <p>¿No tienes una cuenta? <a routerLink="/registro">Regístrate aquí</a></p>
+    </div>
+  </div>
+</ion-content>
