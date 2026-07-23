@@ -3,7 +3,7 @@ import { AppComponent } from './app/app.component';
 import { provideRouter } from '@angular/router';
 import { routes } from './app/app.routes';
 
-// 1. IMPORTAMOS EL PROVEEDOR DE IONIC STANDALONE
+// Proveedor de Ionic Standalone
 import { provideIonicAngular } from '@ionic/angular/standalone';
 
 // Importaciones oficiales de AngularFire
@@ -12,18 +12,24 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { environment } from './environments/environment';
 
+// Importación opcional de Analytics para evitar errores si no se usa con provider
+import { getAnalytics, provideAnalytics } from '@angular/fire/analytics';
+
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),
     
-    // 2. INICIALIZAMOS IONIC EN LA APLICACIÓN (Fuerza el modo Material Design para consistencia)
+    // Inicialización de Ionic
     provideIonicAngular({
       mode: 'md'
     }),
 
-    // Inicialización del ecosistema Firebase con tus credenciales
+    // Inicialización correcta de Firebase con AngularFire
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
-    provideFirestore(() => getFirestore())
+    provideFirestore(() => getFirestore()),
+    
+    // Añadido por si quieres mantener Analytics de forma limpia en standalone:
+    provideAnalytics(() => getAnalytics())
   ]
 }).catch(err => console.error(err));
