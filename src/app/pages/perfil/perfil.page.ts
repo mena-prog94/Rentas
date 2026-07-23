@@ -1,14 +1,16 @@
-import { Component, OnInit, inject, Input } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { 
   IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton,
   IonMenuButton, IonTitle, IonAvatar, IonList, 
-  IonItem, IonIcon, IonLabel, IonButton, AlertController, ModalController, NavController 
+  IonItem, IonIcon, IonLabel, IonButton, AlertController, ModalController 
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
 import { mailOutline, businessOutline, cameraOutline, createOutline, arrowBackOutline } from 'ionicons/icons';
-import { Auth, updateProfile, user } from '@angular/fire/auth';
+
+// Importación correcta del SDK clásico de Firebase Auth
+import { getAuth, updateProfile, onAuthStateChanged } from 'firebase/auth';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 @Component({
@@ -23,9 +25,12 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
   imports: [IonButton]
 })
 class FotoModalComponent {
-  @Input() foto!: string;
-  constructor(private modalCtrl: ModalController) {
-      addIcons({cameraOutline,mailOutline});}
+  foto!: string;
+  private modalCtrl = inject(ModalController);
+  
+  constructor() {
+    addIcons({cameraOutline, mailOutline});
+  }
   cerrar() { this.modalCtrl.dismiss(); }
 }
 
@@ -41,13 +46,13 @@ class FotoModalComponent {
   ]
 })
 export class PerfilPage implements OnInit {
-  private auth = inject(Auth);
+  // Instancia de Auth clásica
+  private auth = getAuth();
   private alertCtrl = inject(AlertController);
   private modalCtrl = inject(ModalController); 
   
   nombreUsuario = '';
   emailUsuario = '';
-  // Respaldo inmediato en localStorage para evitar que la imagen se borre
   fotoPerfil = localStorage.getItem('fotoPerfil') || ''; 
   posicionFoto = localStorage.getItem('posicionFoto') || 'center';
 
@@ -56,11 +61,11 @@ export class PerfilPage implements OnInit {
   }
 
   ngOnInit() {
-    user(this.auth).subscribe(u => {
+    // Escuchar el estado de autenticación con el SDK clásico
+    onAuthStateChanged(this.auth, (u) => {
       if (u) {
         this.nombreUsuario = u.displayName || 'Administrador';
         this.emailUsuario = u.email || '';
-        // Si hay una foto de Firebase, úsala y guárdala en localStorage
         if (u.photoURL) {
           this.fotoPerfil = u.photoURL;
           localStorage.setItem('fotoPerfil', u.photoURL);
@@ -101,11 +106,13 @@ export class PerfilPage implements OnInit {
       });
       if (image.dataUrl) {
         this.fotoPerfil = image.dataUrl;
-        localStorage.setItem('fotoPerfil', image.dataUrl); // Persistir inmediatamente
+        localStorage.setItem('fotoPerfil', image.dataUrl); 
         const u = this.auth.currentUser;
         if (u) await updateProfile(u, { photoURL: this.fotoPerfil });
       }
-    } catch (e) { console.log('Selección cancelada'); }
+    } catch (e) { 
+      console.log('Selección cancelada'); 
+    }
   }
 
   async editarPerfil() {
@@ -128,7 +135,8 @@ export class PerfilPage implements OnInit {
             }
           }
         }
-      ]
+      ],
+      cssClass: 'custom-alert'
     });
     await alert.present();
   }

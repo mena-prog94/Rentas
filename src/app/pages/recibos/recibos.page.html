@@ -6,7 +6,6 @@
     <ion-title>Historial de Cobros</ion-title>
   </ion-toolbar>
 </ion-header>
-<link rel="stylesheet" href="recibos.page.scss">
 
 <ion-content class="ion-padding">
   <div class="header-section" style="margin-bottom: 20px;">
@@ -15,7 +14,7 @@
   </div>
 
   <ion-list lines="none">
-    <ion-card *ngFor="let recibo of (recibos$ | async)" class="recibo-card">
+    <ion-card *ngFor="let recibo of recibos" class="recibo-card">
       <ion-card-content>
         <div class="recibo-header" style="display: flex; justify-content: space-between; align-items: center;">
           <span class="recibo-id" style="font-weight: bold;">{{ recibo.numeroFactura }}</span>
@@ -25,7 +24,7 @@
         </div>
 
         <div class="recibo-body" style="margin-top: 10px;">
-          <!-- Fallback: si nombreCliente es undefined, muestra 'Cliente no definido' -->
+          <!-- Fallback: si nombreCliente es undefined, muestra 'Cargando nombre' -->
           <h3>{{ recibo.nombreCliente || 'Cargando nombre' }}</h3>
           <p><strong>Inmueble:</strong> {{ recibo.vivienda }}</p>
           <p><strong>Monto:</strong> ${{ recibo.monto | number:'1.2-2' }}</p>

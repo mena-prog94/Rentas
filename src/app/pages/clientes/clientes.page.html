@@ -33,7 +33,7 @@
     <ion-item class="custom-input">
       <ion-label position="stacked">Vivienda Asignada</ion-label>
       <ion-select formControlName="viviendaAsignada" placeholder="Selecciona" interface="action-sheet" (ionChange)="verificarEstadoVivienda($event)">
-        <ion-select-option *ngFor="let viv of (viviendas$ | async)" 
+        <ion-select-option *ngFor="let viv of viviendas" 
                            [value]="viv.id" 
                            [disabled]="viv.estado === 'Rentada' && viv.id !== viviendaOriginalId"
                            [class.option-rentada]="viv.estado === 'Rentada' && viv.id !== viviendaOriginalId">

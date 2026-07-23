@@ -8,8 +8,8 @@ import {
 } from '@ionic/angular/standalone';
 import { AlertController, ToastController } from '@ionic/angular';
 
-// IMPORTACIONES CORRECTAS DEL SDK MODULAR
-import { Firestore, doc, getDoc, updateDoc, collection, query, where, getDocs, limit } from '@angular/fire/firestore';
+// IMPORTACIÓN CORRECTA DEL SDK CLÁSICO DE FIREBASE
+import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs, limit } from 'firebase/firestore';
 
 import { addIcons } from 'ionicons';
 import { 
@@ -27,7 +27,9 @@ import {
   ]
 })
 export class DetalleReciboPage implements OnInit {
-  private firestore = inject(Firestore);
+  // Instancia de Firestore clásica
+  private db = getFirestore();
+
   private route = inject(ActivatedRoute);
   private alertCtrl = inject(AlertController);
   private toastCtrl = inject(ToastController);
@@ -43,9 +45,9 @@ export class DetalleReciboPage implements OnInit {
     if (id) await this.cargarDetalleRecibo(id);
   }
 
-  // 1. CARGAMOS EL RECIBO (MODULAR)
+  // 1. CARGAMOS EL RECIBO (CLÁSICO)
   async cargarDetalleRecibo(id: string) {
-    const docRef = doc(this.firestore, 'facturas', id);
+    const docRef = doc(this.db, 'facturas', id);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       this.recibo = { id: docSnap.id, ...docSnap.data() };
@@ -64,47 +66,47 @@ export class DetalleReciboPage implements OnInit {
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         { text: 'Confirmar', handler: () => this.registrarPago() }
-      ]
+      ],
+      cssClass: 'custom-alert'
     });
     await alert.present();
   }
 
-  // 2. ACTUALIZAMOS EL PAGO (MODULAR)
+  // 2. ACTUALIZAMOS EL PAGO (CLÁSICO)
   async registrarPago() {
-    const docRef = doc(this.firestore, 'facturas', this.recibo.id);
+    const docRef = doc(this.db, 'facturas', this.recibo.id);
     await updateDoc(docRef, { estadoPago: 'pagado', fechaPago: new Date() });
     this.recibo.estadoPago = 'pagado';
     const toast = await this.toastCtrl.create({ message: 'Pago registrado!', duration: 2000, color: 'success' });
     await toast.present();
   }
 
-async compartirWhatsApp() {
-  if (!this.recibo) return;
+  async compartirWhatsApp() {
+    if (!this.recibo) return;
 
-  try {
-    // 1. Buscamos al cliente (lo que ya teníamos funcionando)
-    const clientesRef = collection(this.firestore, 'clientes');
-    const q = query(clientesRef, where('nombreCompleto', '==', this.recibo.nombreCliente), limit(1));
-    const querySnapshot = await getDocs(q);
-    const telefono = !querySnapshot.empty ? querySnapshot.docs[0].data()['telefono'] : null;
+    try {
+      // 1. Buscamos al cliente (SDK clásico)
+      const clientesRef = collection(this.db, 'clientes');
+      const q = query(clientesRef, where('nombreCompleto', '==', this.recibo.nombreCliente), limit(1));
+      const querySnapshot = await getDocs(q);
+      const telefono = !querySnapshot.empty ? querySnapshot.docs[0].data()['telefono'] : null;
 
-    if (!telefono) {
-      alert("No se pudo obtener el teléfono del cliente.");
-      return;
-    }
+      if (!telefono) {
+        alert("No se pudo obtener el teléfono del cliente.");
+        return;
+      }
 
-    // 2. Convertimos la fecha si existe
-    let fechaFormateada = "No especificada";
-    if (this.recibo.fechaEmision && typeof this.recibo.fechaEmision.toDate === 'function') {
-      fechaFormateada = this.recibo.fechaEmision.toDate().toLocaleDateString();
-    }
+      // 2. Convertimos la fecha si existe
+      let fechaFormateada = "No especificada";
+      if (this.recibo.fechaEmision && typeof this.recibo.fechaEmision.toDate === 'function') {
+        fechaFormateada = this.recibo.fechaEmision.toDate().toLocaleDateString();
+      }
 
-    // 3. Construimos el mensaje (REVISA EL NOMBRE DEL CAMPO DE LA CASA)
-    // He puesto 'vivienda' o 'casaAsignada' como posibles nombres.
-    const vivienda = this.recibo.viviendaAsignada || this.recibo.vivienda || "No especificada";
+      // 3. Construimos el mensaje
+      const vivienda = this.recibo.viviendaAsignada || this.recibo.vivienda || "No especificada";
 
-    const mensaje = `*RECIBO DE PAGO*
- Maria Aquino
+      const mensaje = `*RECIBO DE PAGO*
+Maria Aquino
 --------------------------
 
 *Factura #:* ${this.recibo.numeroFactura}
@@ -116,13 +118,13 @@ async compartirWhatsApp() {
 --------------------------
 Este es un recibo emitido por Maria Aquino.`;
 
-    const url = `https://wa.me/${telefono.toString().replace(/\D/g, '')}?text=${encodeURIComponent(mensaje)}`;
-    await Browser.open({ url: url });
+      const url = `https://wa.me/${telefono.toString().replace(/\D/g, '')}?text=${encodeURIComponent(mensaje)}`;
+      await Browser.open({ url: url });
 
-  } catch (error) {
-    console.error("Error al preparar el mensaje:", error);
+    } catch (error) {
+      console.error("Error al preparar el mensaje:", error);
+    }
   }
-}
 
   imprimirRecibo() {
     const printSection = document.getElementById('print-section');

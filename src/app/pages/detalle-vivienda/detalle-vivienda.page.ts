@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router'; // <-- 1. Importar Router
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { 
   IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, 
   IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCardContent, 
@@ -11,7 +11,9 @@ import {
   homeOutline, locationOutline, cashOutline, bedOutline, waterOutline, 
   keyOutline, refreshOutline, createOutline, alertCircleOutline 
 } from 'ionicons/icons';
-import { Firestore, doc, getDoc, updateDoc } from '@angular/fire/firestore';
+
+// Importación correcta del SDK clásico de Firebase
+import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
 
 @Component({
   selector: 'app-detalle-vivienda',
@@ -29,9 +31,11 @@ export class DetalleViviendaPage implements OnInit {
   vivienda: any = null;
   cargando = true;
 
+  // Instancia de Firestore clásica
+  private db = getFirestore();
+
   private route = inject(ActivatedRoute);
-  private router = inject(Router); // <-- 2. Inyectar Router
-  private firestore = inject(Firestore);
+  private router = inject(Router);
   private toastCtrl = inject(ToastController);
   private alertCtrl = inject(AlertController);
 
@@ -48,7 +52,8 @@ export class DetalleViviendaPage implements OnInit {
 
   async cargarDetalleVivienda(id: string) {
     try {
-      const docRef = doc(this.firestore, `viviendas/${id}`);
+      // Uso del SDK clásico para obtener el documento
+      const docRef = doc(this.db, 'viviendas', id);
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
@@ -63,7 +68,7 @@ export class DetalleViviendaPage implements OnInit {
     }
   }
 
- async rentarDesdeDetalle() {
+  async rentarDesdeDetalle() {
     if (!this.viviendaId || !this.vivienda) return;
 
     const alert = await this.alertCtrl.create({
@@ -78,13 +83,13 @@ export class DetalleViviendaPage implements OnInit {
         {
           text: 'Sí, Asignar',
           handler: () => {
-            // Cambiamos el nombre del parámetro a 'viviendaPorRentar' para evitar conflictos
             this.router.navigate(['/clientes'], { 
               queryParams: { viviendaPorRentar: this.viviendaId } 
             });
           }
         }
-      ]
+      ],
+      cssClass: 'custom-alert'
     });
 
     await alert.present();
@@ -108,7 +113,8 @@ export class DetalleViviendaPage implements OnInit {
             await this.ejecutarLiberacion();
           }
         }
-      ]
+      ],
+      cssClass: 'custom-alert'
     });
 
     await alert.present();
@@ -116,7 +122,8 @@ export class DetalleViviendaPage implements OnInit {
 
   private async ejecutarLiberacion() {
     try {
-      const docRef = doc(this.firestore, `viviendas/${this.viviendaId}`);
+      // Uso del SDK clásico para actualizar el documento
+      const docRef = doc(this.db, 'viviendas', this.viviendaId!);
       await updateDoc(docRef, { estado: 'Disponible' });
       this.vivienda.estado = 'Disponible';
 

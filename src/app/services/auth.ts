@@ -1,34 +1,43 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { 
-  Auth, 
+  getAuth, 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
   signOut, 
-  user,
+  onAuthStateChanged,
   updateProfile,
-  initializeAuth // <-- Útil si se requiere una instancia secundaria para registrar sin desloguear
-} from '@angular/fire/auth';
+  User
+} from 'firebase/auth';
 import { 
-  Firestore, 
+  getFirestore, 
   doc, 
   setDoc, 
   getDoc 
-} from '@angular/fire/firestore';
+} from 'firebase/firestore';
 import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  getCurrentUser() {
-    throw new Error('Method not implemented.');
-  }
-  // Inyección de dependencias de Firebase
-  private auth = inject(Auth);
-  private firestore = inject(Firestore);
+  // Instancias del SDK clásico de Firebase
+  private auth = getAuth();
+  private firestore = getFirestore();
 
   // Observable para vigilar si el usuario inicia o cierra sesión en tiempo real
-  user$: Observable<any> = user(this.auth);
+  user$: Observable<User | null> = new Observable(subscriber => {
+    const unsubscribe = onAuthStateChanged(this.auth, (user) => {
+      subscriber.next(user);
+    }, error => subscriber.error(error));
+    return { unsubscribe };
+  });
+
+  /**
+   * Obtiene el usuario actual de manera síncrona
+   */
+  getCurrentUser(): User | null {
+    return this.auth.currentUser;
+  }
 
   /**
    * Registra un nuevo administrador/usuario principal en Firebase Auth y Firestore
@@ -50,7 +59,7 @@ export class AuthService {
         uid: user.uid,
         nombreCompleto,
         email,
-        rol: 'administrador', // Cambiado a administrador ya que el registro público suele ser de este rol
+        rol: 'administrador',
         createdAt: new Date()
       });
 
@@ -63,9 +72,6 @@ export class AuthService {
   /**
    * REGISTRO DE CLIENTES: Crea un usuario para el cliente en Firebase Auth 
    * y guarda su perfil correspondiente en Firestore con el rol 'cliente'.
-   * * NOTA: Firebase Auth por defecto inicia sesión automáticamente con el usuario creado.
-   * Si estás registrando clientes desde un panel de administración y no quieres que se cierre tu sesión,
-   * este método almacena el UID y genera su correspondiente documento en Firestore.
    */
   async registerCliente(email: string, password: string, nombreCompleto: string) {
     try {

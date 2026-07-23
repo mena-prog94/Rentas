@@ -10,8 +10,8 @@ import {
 import { addIcons } from 'ionicons';
 import { personAddOutline, saveOutline, imageOutline, documentTextOutline, createOutline, trashOutline } from 'ionicons/icons';
 
-import { Firestore, collection, collectionData, addDoc, doc, updateDoc, getDoc } from '@angular/fire/firestore';
-import { Observable, Subscription } from 'rxjs';
+// Importación correcta del SDK clásico de Firebase Firestore
+import { getFirestore, collection, addDoc, doc, updateDoc, getDoc, onSnapshot } from 'firebase/firestore';
 
 @Component({
   selector: 'app-clientes',
@@ -28,14 +28,16 @@ export class ClientesPage implements OnInit, OnDestroy {
   clienteForm!: FormGroup;
   cargando = false;
   imagenContratoB64: string | null = null;
-  viviendas$!: Observable<any[]>;
-  private viviendas: any[] = [];
-  private viviendasSub!: Subscription;
+  
+  // Modificado a público para corregir el error TS2341 en la plantilla HTML
+  viviendas: any[] = [];
+  private viviendasUnsubscribe: any = null;
   
   clienteIdEnEdicion: string | null = null;
-  viviendaOriginalId: string | null = null; // <-- Cambiado a público (eliminado 'private')
+  viviendaOriginalId: string | null = null;
 
-  private firestore = inject(Firestore);
+  // Instancia de Firestore clásica
+  private db = getFirestore();
   private toastController = inject(ToastController);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -74,17 +76,24 @@ export class ClientesPage implements OnInit, OnDestroy {
         this.clienteIdEnEdicion = params['id'];
         this.cargarDatosParaEdicion(this.clienteIdEnEdicion!);
       } else if (params['viviendaPorRentar']) {
-        // Autoseleccionar la vivienda cuando se viene desde el detalle de la propiedad
         this.clienteForm.patchValue({ viviendaAsignada: params['viviendaPorRentar'] });
       }
     });
 
-    this.viviendas$ = collectionData(collection(this.firestore, 'viviendas'), { idField: 'id' }) as Observable<any[]>;
-    this.viviendasSub = this.viviendas$.subscribe(data => { this.viviendas = data; });
+    // Escuchar viviendas en tiempo real con el SDK clásico
+    const viviendasRef = collection(this.db, 'viviendas');
+    this.viviendasUnsubscribe = onSnapshot(viviendasRef, (snapshot) => {
+      this.viviendas = snapshot.docs.map(d => ({
+        id: d.id,
+        ...d.data()
+      }));
+    }, (error) => {
+      console.error("Error al escuchar viviendas:", error);
+    });
   }
 
   async cargarDatosParaEdicion(id: string) {
-    const docRef = doc(this.firestore, `clientes/${id}`);
+    const docRef = doc(this.db, `clientes/${id}`);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       const data = docSnap.data();
@@ -94,7 +103,11 @@ export class ClientesPage implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy() { if (this.viviendasSub) this.viviendasSub.unsubscribe(); }
+  ngOnDestroy() { 
+    if (this.viviendasUnsubscribe) {
+      this.viviendasUnsubscribe();
+    }
+  }
 
   async guardarCliente() {
     if (this.clienteForm.invalid) return;
@@ -108,14 +121,14 @@ export class ClientesPage implements OnInit, OnDestroy {
       const duracionFinal = datosForm.tipoContrato === 'libre' ? 'Indefinido' : datosForm.duracionContrato;
 
       if (!this.clienteIdEnEdicion) {
-        const clienteRef = await addDoc(collection(this.firestore, 'clientes'), { 
+        const clienteRef = await addDoc(collection(this.db, 'clientes'), { 
           ...datosForm, 
           duracionContrato: duracionFinal,
           imagenContrato: this.imagenContratoB64, 
           fechaRegistro: new Date() 
         });
 
-        await addDoc(collection(this.firestore, 'facturas'), {
+        await addDoc(collection(this.db, 'facturas'), {
           clienteId: clienteRef.id,
           nombreCliente: datosForm.nombreCompleto,
           viviendaId: datosForm.viviendaAsignada,
@@ -130,14 +143,14 @@ export class ClientesPage implements OnInit, OnDestroy {
 
         await this.generarFacturaMensual(clienteRef.id, datosForm.viviendaAsignada, datosForm.nombreCompleto, codigoVivienda, precioMensual);
 
-        await updateDoc(doc(this.firestore, 'viviendas', datosForm.viviendaAsignada), {
+        await updateDoc(doc(this.db, 'viviendas', datosForm.viviendaAsignada), {
           clienteId: clienteRef.id,
           estado: 'Rentada'
         });
 
         await this.mostrarToast('Cliente registrado y facturas generadas', 'success');
       } else {
-        const clienteRef = doc(this.firestore, `clientes/${this.clienteIdEnEdicion}`);
+        const clienteRef = doc(this.db, `clientes/${this.clienteIdEnEdicion}`);
         await updateDoc(clienteRef, {
           ...datosForm,
           duracionContrato: duracionFinal,
@@ -145,11 +158,11 @@ export class ClientesPage implements OnInit, OnDestroy {
         });
 
         if (this.viviendaOriginalId && this.viviendaOriginalId !== datosForm.viviendaAsignada) {
-          await updateDoc(doc(this.firestore, 'viviendas', this.viviendaOriginalId), {
+          await updateDoc(doc(this.db, 'viviendas', this.viviendaOriginalId), {
             clienteId: null,
             estado: 'Disponible'
           });
-          await updateDoc(doc(this.firestore, 'viviendas', datosForm.viviendaAsignada), {
+          await updateDoc(doc(this.db, 'viviendas', datosForm.viviendaAsignada), {
             clienteId: this.clienteIdEnEdicion,
             estado: 'Rentada'
           });
@@ -181,13 +194,13 @@ export class ClientesPage implements OnInit, OnDestroy {
             try {
               const viviendaIdALiberar = this.viviendaOriginalId || this.clienteForm.get('viviendaAsignada')?.value;
               if (viviendaIdALiberar) {
-                await updateDoc(doc(this.firestore, 'viviendas', viviendaIdALiberar), {
+                await updateDoc(doc(this.db, 'viviendas', viviendaIdALiberar), {
                   clienteId: null,
                   estado: 'Disponible'
                 });
               }
 
-              await updateDoc(doc(this.firestore, `clientes/${this.clienteIdEnEdicion}`), {
+              await updateDoc(doc(this.db, `clientes/${this.clienteIdEnEdicion}`), {
                 estadoContrato: 'Cancelado',
                 viviendaAsignada: null
               });
@@ -202,7 +215,8 @@ export class ClientesPage implements OnInit, OnDestroy {
             }
           }
         }
-      ]
+      ],
+      cssClass: 'custom-alert'
     });
 
     await alert.present();
@@ -215,7 +229,7 @@ export class ClientesPage implements OnInit, OnDestroy {
     const fechaVence = new Date();
     fechaVence.setDate(hoy.getDate() + 30);
 
-    await addDoc(collection(this.firestore, 'facturas'), {
+    await addDoc(collection(this.db, 'facturas'), {
       clienteId,
       viviendaId,
       nombreCliente: nombre,
@@ -232,27 +246,24 @@ export class ClientesPage implements OnInit, OnDestroy {
   }
 
   async mostrarToast(message: string, color: string) {
-    const toast = await this.toastController.create({ message, duration: 2000, color });
+    const toast = await this.toastController.create({ message, duration: 2000, color, position: 'bottom' });
     await toast.present();
   }
 
   async verificarEstadoVivienda(event: any) {
     const viviendaId = event.detail.value;
+    const viviendaSeleccionada = this.viviendas.find(v => v.id === viviendaId);
     
-    this.viviendas$.subscribe(async (viviendas) => {
-      const viviendaSeleccionada = viviendas.find(v => v.id === viviendaId);
+    if (viviendaSeleccionada && viviendaSeleccionada.estado === 'Rentada' && viviendaId !== this.viviendaOriginalId) {
+      const toast = await this.toastCtrl.create({
+        message: 'Esta vivienda ya se encuentra rentada.',
+        duration: 3000,
+        color: 'danger',
+        position: 'bottom'
+      });
+      await toast.present();
       
-      if (viviendaSeleccionada && viviendaSeleccionada.estado === 'Rentada' && viviendaId !== this.viviendaOriginalId) {
-        const toast = await this.toastCtrl.create({
-          message: 'Esta vivienda ya se encuentra rentada.',
-          duration: 3000,
-          color: 'danger',
-          position: 'bottom'
-        });
-        await toast.present();
-        
-        this.clienteForm.get('viviendaAsignada')?.setValue(null);
-      }
-    }).unsubscribe();
+      this.clienteForm.get('viviendaAsignada')?.setValue(null);
+    }
   }
 }

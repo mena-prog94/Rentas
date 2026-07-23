@@ -13,7 +13,7 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { businessOutline, mailOutline, lockClosedOutline } from 'ionicons/icons';
-import { AuthService } from '../../services/auth'; // <-- Ajusta la ruta según tu estructura de carpetas
+import { AuthService } from '../../services/auth'; 
 
 @Component({
   selector: 'app-login',
@@ -35,14 +35,12 @@ import { AuthService } from '../../services/auth'; // <-- Ajusta la ruta según 
 export class LoginPage implements OnInit {
   loginForm!: FormGroup; 
 
-  // Inyecciones modernas usando inject() para consistencia con tu AuthService
   private authService = inject(AuthService);
   private navCtrl = inject(NavController);
   private loadingCtrl = inject(LoadingController);
   private alertCtrl = inject(AlertController);
 
   constructor() {
-    // Añadimos iconos útiles que usarás en tus inputs de login
     addIcons({ businessOutline, mailOutline, lockClosedOutline });
   }
 
@@ -61,7 +59,6 @@ export class LoginPage implements OnInit {
 
     const { email, password } = this.loginForm.value;
 
-    // 1. Mostrar spinner de carga
     const loading = await this.loadingCtrl.create({
       message: 'Iniciando sesión...',
       spinner: 'crescent',
@@ -70,11 +67,10 @@ export class LoginPage implements OnInit {
     await loading.present();
 
     try {
-      // 2. Ejecutar inicio de sesión en Firebase
+      // Ajustado a los parámetros (correo, clave) que acepta tu AuthService funcional
       const userCredential = await this.authService.login(email, password);
       console.log('Login exitoso:', userCredential.user);
 
-      // 3. Redirigir al Dashboard limpiando el historial
       await loading.dismiss();
       this.navCtrl.navigateRoot('/dashboard');
 
@@ -82,7 +78,6 @@ export class LoginPage implements OnInit {
       await loading.dismiss();
       console.error('Error al iniciar sesión:', error);
       
-      // 4. Mostrar alerta visual directa en el celular con el error exacto
       const errorMessage = error.message || JSON.stringify(error);
       const errorCode = error.code || 'Desconocido';
 
@@ -90,10 +85,6 @@ export class LoginPage implements OnInit {
     }
   }
 
-  /**
-   * Muestra una alerta interactiva traduciendo los errores típicos de Firebase Auth
-   * o mostrando el mensaje técnico si ocurre algo inusual en el celular.
-   */
   private async mostrarError(errorCode: string, rawMessage: string) {
     let mensaje = 'Ha ocurrido un error inesperado al intentar iniciar sesión.';
 
@@ -113,7 +104,6 @@ export class LoginPage implements OnInit {
         mensaje = 'Error de conexión. Verifica que tengas acceso a internet en el dispositivo.';
         break;
       default:
-        // Si es otro tipo de error de Firebase nativo, lo mostramos para depurar fácilmente en el celular
         mensaje = `Detalle del error (${errorCode}): ${rawMessage}`;
         break;
     }

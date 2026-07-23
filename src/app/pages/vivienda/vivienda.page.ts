@@ -11,7 +11,8 @@ import {
 import { addIcons } from 'ionicons';
 import { homeOutline, cloudUploadOutline, keyOutline, saveOutline } from 'ionicons/icons';
 
-import { Firestore, collection, addDoc, doc, getDoc, updateDoc } from '@angular/fire/firestore';
+// Importación correcta del SDK clásico de Firebase Firestore
+import { getFirestore, collection, addDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { AuthService } from '../../services/auth';
 import { firstValueFrom } from 'rxjs';
 
@@ -33,7 +34,8 @@ export class ViviendaPage implements OnInit {
   modoEdicion = false;
   viviendaId: string | null = null;
 
-  private firestore = inject(Firestore);
+  // Instancia de Firestore clásica
+  private db = getFirestore();
   private authService = inject(AuthService);
   private toastController = inject(ToastController);
   private loadingCtrl = inject(LoadingController);
@@ -74,18 +76,21 @@ export class ViviendaPage implements OnInit {
     this.cargando = true;
     try {
       if (this.modoEdicion && this.viviendaId) {
-        await updateDoc(doc(this.firestore, `viviendas/${this.viviendaId}`), this.viviendaForm.value);
+        // Uso del SDK clásico para actualizar
+        const docRef = doc(this.db, 'viviendas', this.viviendaId);
+        await updateDoc(docRef, this.viviendaForm.value);
         this.mostrarMensaje('Propiedad actualizada correctamente.', 'success');
         return this.viviendaId;
       } else {
         const usuarioAuth = await firstValueFrom(this.authService.user$);
-        const nuevoDoc = await addDoc(collection(this.firestore, 'viviendas'), {
+        // Uso del SDK clásico para agregar un nuevo documento
+        const colRef = collection(this.db, 'viviendas');
+        const nuevoDoc = await addDoc(colRef, {
           ...this.viviendaForm.value,
           registradoPor: usuarioAuth?.uid,
           fechaRegistro: new Date()
         });
         this.mostrarMensaje('Propiedad guardada con éxito.', 'success');
-        // Actualizamos el ID localmente para que se convierta en modo edición si el usuario sigue en la pantalla
         this.viviendaId = nuevoDoc.id;
         this.modoEdicion = true;
         return nuevoDoc.id;
@@ -118,10 +123,9 @@ export class ViviendaPage implements OnInit {
       return;
     }
 
-    const loading = await this.loadingCtrl.create({ message: 'Procesando...' });
+    const loading = await this.loadingCtrl.create({ message: 'Procesando...', cssClass: 'custom-loading' });
     await loading.present();
 
-    // Si ya tiene ID (porque se guardó o se está editando), no volvemos a hacer addDoc
     let idVivienda = this.viviendaId;
     if (!idVivienda) {
       idVivienda = await this.guardarVivienda();
@@ -137,10 +141,12 @@ export class ViviendaPage implements OnInit {
   }
 
   async cargarDatosParaEditar(id: string) {
-    const loading = await this.loadingCtrl.create({ message: 'Cargando propiedad...' });
+    const loading = await this.loadingCtrl.create({ message: 'Cargando propiedad...', cssClass: 'custom-loading' });
     await loading.present();
     try {
-      const docSnap = await getDoc(doc(this.firestore, `viviendas/${id}`));
+      // Uso del SDK clásico para obtener el documento
+      const docRef = doc(this.db, 'viviendas', id);
+      const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         this.viviendaForm.patchValue(docSnap.data());
       }

@@ -33,10 +33,12 @@ import {
   timeOutline,
   receiptOutline,
   logoWhatsapp,
-  printOutline, createOutline } from 'ionicons/icons';
+  printOutline, 
+  createOutline 
+} from 'ionicons/icons';
 
-// Firebase Firestore
-import { Firestore, doc, getDoc, collection, query, where, getDocs } from '@angular/fire/firestore';
+// Importaciones de Firebase SDK Clásico (consistente con tu AuthService)
+import { getFirestore, doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 
 @Component({
   selector: 'app-detalle-cliente',
@@ -66,12 +68,14 @@ import { Firestore, doc, getDoc, collection, query, where, getDocs } from '@angu
 export class DetalleClientePage implements OnInit {
   cliente: any = null;
   factura: any = null;
-  viviendaEstado: string | null = null; // <-- Nueva variable para guardar el estado de la vivienda
+  viviendaEstado: string | null = null; 
   cargando = true;
+
+  // Instancia de Firestore clásica
+  private db = getFirestore();
 
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private firestore = inject(Firestore);
   private loadingCtrl = inject(LoadingController);
   private toastCtrl = inject(ToastController);
 
@@ -88,17 +92,15 @@ export class DetalleClientePage implements OnInit {
   }
   
   async ngOnInit() {
-  // 1. Priorizamos el ID que viene por los queryParams (si viene de editar)
-  // 2. Si no, tomamos el ID que viene por la URL (si viene del dashboard)
-  const idCliente = this.route.snapshot.queryParams['id'] || this.route.snapshot.paramMap.get('id');
-  
-  if (idCliente) {
-    await this.cargarDatosCliente(idCliente);
-  } else {
-    this.mostrarError('ID de cliente no válido.');
-    this.router.navigate(['/dashboard']);
+    const idCliente = this.route.snapshot.queryParams['id'] || this.route.snapshot.paramMap.get('id');
+    
+    if (idCliente) {
+      await this.cargarDatosCliente(idCliente);
+    } else {
+      this.mostrarError('ID de cliente no válido.');
+      this.router.navigate(['/dashboard']);
+    }
   }
-}
 
   async cargarDatosCliente(id: string) {
     this.cargando = true;
@@ -109,18 +111,17 @@ export class DetalleClientePage implements OnInit {
     await loading.present();
 
     try {
-      const clienteRef = doc(this.firestore, `clientes/${id}`);
+      // Consulta con SDK clásico
+      const clienteRef = doc(this.db, 'clientes', id);
       const clienteSnap = await getDoc(clienteRef);
 
       if (clienteSnap.exists()) {
         this.cliente = { id: clienteSnap.id, ...clienteSnap.data() };
         
-        // 1. Consultar el estado de la vivienda asignada
         if (this.cliente.viviendaAsignada) {
           await this.cargarEstadoVivienda(this.cliente.viviendaAsignada);
         }
 
-        // 2. Buscar la factura de depósito
         await this.cargarFacturaDeposito(id);
       } else {
         this.mostrarError('El cliente no existe o fue eliminado.');
@@ -137,7 +138,7 @@ export class DetalleClientePage implements OnInit {
 
   async cargarEstadoVivienda(viviendaId: string) {
     try {
-      const viviendaRef = doc(this.firestore, `viviendas/${viviendaId}`);
+      const viviendaRef = doc(this.db, 'viviendas', viviendaId);
       const viviendaSnap = await getDoc(viviendaRef);
       if (viviendaSnap.exists()) {
         const datosVivienda = viviendaSnap.data();
@@ -150,7 +151,7 @@ export class DetalleClientePage implements OnInit {
 
   async cargarFacturaDeposito(clienteId: string) {
     try {
-      const facturasCol = collection(this.firestore, 'facturas');
+      const facturasCol = collection(this.db, 'facturas');
       const q = query(facturasCol, where('clienteId', '==', clienteId));
       const querySnapshot = await getDocs(q);
       

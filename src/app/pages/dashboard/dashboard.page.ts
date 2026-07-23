@@ -9,8 +9,10 @@ import {
 import { addIcons } from 'ionicons';
 import { peopleOutline, homeOutline, personOutline, logOutOutline, receiptOutline } from 'ionicons/icons';
 import { AuthService } from '../../services/auth';
-import { Firestore, collection, getDocs, query, where } from '@angular/fire/firestore';
 import { user } from '@angular/fire/auth';
+
+// Importación correcta del SDK clásico de Firebase Firestore
+import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore';
 
 @Component({
   selector: 'app-dashboard',
@@ -26,7 +28,9 @@ export class DashboardPage implements OnInit {
   private authService = inject(AuthService);
   private navCtrl = inject(NavController);
   private loadingCtrl = inject(LoadingController);
-  private firestore = inject(Firestore);
+
+  // Instancia de Firestore clásica
+  private db = getFirestore();
 
   userName: string = 'Administrador';
   totalPropiedades = 0;
@@ -34,7 +38,7 @@ export class DashboardPage implements OnInit {
   totalCobrado = 0;
 
   constructor() {
-    addIcons({peopleOutline,homeOutline,receiptOutline,personOutline,logOutOutline});
+    addIcons({peopleOutline, homeOutline, receiptOutline, personOutline, logOutOutline});
   }
 
   async ngOnInit() {
@@ -55,14 +59,15 @@ export class DashboardPage implements OnInit {
     try {
       const hoy = new Date();
       const mesActual = hoy.getMonth();
-      const viviendasSnap = await getDocs(collection(this.firestore, 'viviendas'));
+      
+      const viviendasSnap = await getDocs(collection(this.db, 'viviendas'));
       this.totalPropiedades = viviendasSnap.size;
 
-      const qInquilinos = query(collection(this.firestore, 'viviendas'), where('estado', '==', 'Rentada'));
+      const qInquilinos = query(collection(this.db, 'viviendas'), where('estado', '==', 'Rentada'));
       const inquilinosSnap = await getDocs(qInquilinos);
       this.totalInquilinos = inquilinosSnap.size;
 
-      const qPagos = query(collection(this.firestore, 'facturas'), where('estadoPago', '==', 'pagado'));
+      const qPagos = query(collection(this.db, 'facturas'), where('estadoPago', '==', 'pagado'));
       const pagosSnap = await getDocs(qPagos);
 
       this.totalCobrado = pagosSnap.docs.reduce((sum, doc) => {
@@ -74,7 +79,6 @@ export class DashboardPage implements OnInit {
     }
   }
 
-  // Se simplificó: el logout ya no usa AlertController aquí si prefieres
   async onLogout() {
     const loading = await this.loadingCtrl.create({ message: 'Cerrando sesión...' });
     await loading.present();

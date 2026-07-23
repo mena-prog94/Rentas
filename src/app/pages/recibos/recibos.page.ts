@@ -1,16 +1,17 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { 
   IonContent, IonList, IonBadge, IonButton, IonButtons, IonIcon, 
   IonCard, IonCardContent, AlertController, IonTitle, 
-  IonBackButton, IonToolbar, IonHeader, ToastController,
-  IonItem, IonLabel
+  IonBackButton, IonToolbar, IonHeader, ToastController
+  
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { receiptOutline, cashOutline, alertCircleOutline, eyeOutline } from 'ionicons/icons';
-import { Firestore, collection, collectionData, doc, updateDoc, getDocs, addDoc, getDoc } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
+
+// Importación correcta del SDK clásico de Firebase Firestore
+import { getFirestore, collection, doc, updateDoc, getDocs, addDoc, getDoc, onSnapshot } from 'firebase/firestore';
 
 @Component({
   selector: 'app-recibos',
@@ -18,26 +19,47 @@ import { Observable } from 'rxjs';
   standalone: true,
   imports: [
     CommonModule, IonContent, IonList, IonBadge, IonButton, IonButtons, IonIcon, 
-    IonCard, IonCardContent, IonTitle, IonBackButton, IonToolbar, IonHeader,
+    IonCard, IonCardContent, IonTitle, IonBackButton, IonToolbar, IonHeader
     
   ]
 })
-export class RecibosPage implements OnInit {
-  private firestore = inject(Firestore);
+export class RecibosPage implements OnInit, OnDestroy {
+  // Instancia de Firestore clásica
+  private db = getFirestore();
   private alertController = inject(AlertController);
   private toastCtrl = inject(ToastController);
   private router = inject(Router);
 
-  recibos$: Observable<any[]>;
+  recibos: any[] = [];
+  private unsubscribe: any = null;
 
   constructor() {
     addIcons({ receiptOutline, cashOutline, alertCircleOutline, eyeOutline });
-    const recibosRef = collection(this.firestore, 'facturas');
-    this.recibos$ = collectionData(recibosRef, { idField: 'id' });
   }
 
   ngOnInit() {
+    this.cargarRecibosTiempoReal();
     this.verificarVencimientosPendientes();
+  }
+
+  ngOnDestroy() {
+    // Limpiar el listener al salir de la página para evitar fugas de memoria
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
+  }
+
+  // Cargar recibos en tiempo real usando el SDK clásico
+  cargarRecibosTiempoReal() {
+    const recibosRef = collection(this.db, 'facturas');
+    this.unsubscribe = onSnapshot(recibosRef, (snapshot) => {
+      this.recibos = snapshot.docs.map(docSnap => ({
+        id: docSnap.id,
+        ...docSnap.data()
+      }));
+    }, (error) => {
+      console.error("Error al escuchar los recibos:", error);
+    });
   }
 
   verDetalles(recibo: any) {
@@ -54,7 +76,7 @@ export class RecibosPage implements OnInit {
           text: 'Sí, Pagar',
           handler: async () => {
             try {
-              const docRef = doc(this.firestore, 'facturas', recibo.id);
+              const docRef = doc(this.db, 'facturas', recibo.id);
               await updateDoc(docRef, { estadoPago: 'pagado' });
 
               if (recibo.tipo === 'deposito' && recibo.clienteId) {
@@ -66,7 +88,6 @@ export class RecibosPage implements OnInit {
                 await toast.present();
               }
 
-              // Redirigir a la vista de detalles del recibo
               this.router.navigate(['/detalle-recibo', recibo.id]);
 
             } catch (error) {
@@ -74,35 +95,29 @@ export class RecibosPage implements OnInit {
             }
           }
         }
-      ]
+      ],
+      cssClass: 'custom-alert'
     });
     await alert.present();
   }
 
   async generarFacturaMensualTrasDeposito(reciboDeposito: any) {
-    // 1. Obtener fecha base
     const baseDate = reciboDeposito.fechaEmision.toDate 
       ? reciboDeposito.fechaEmision.toDate() 
       : new Date(reciboDeposito.fechaEmision);
 
-    // 2. FORZAR el salto de mes:
-    // Creamos una fecha apuntando al día 1 del mes siguiente
     const year = baseDate.getFullYear();
     const month = baseDate.getMonth();
     const fechaEmisionMesSig = new Date(year, month + 1, baseDate.getDate());
-
-    // 3. Vencimiento: 30 días después de la nueva fecha
     const fechaVence = new Date(fechaEmisionMesSig.getTime() + (30 * 24 * 60 * 60 * 1000));
 
-    // 4. Obtener precio de la vivienda
     let montoMensual = 0;
-    const vivSnap = await getDoc(doc(this.firestore, 'viviendas', reciboDeposito.viviendaId));
+    const vivSnap = await getDoc(doc(this.db, 'viviendas', reciboDeposito.viviendaId));
     if (vivSnap.exists()) {
       montoMensual = vivSnap.data()['precioMensual'] || 0;
     }
 
-    // 5. Crear documento
-    await addDoc(collection(this.firestore, 'facturas'), {
+    await addDoc(collection(this.db, 'facturas'), {
       clienteId: reciboDeposito.clienteId,
       viviendaId: reciboDeposito.viviendaId,
       nombreCliente: reciboDeposito.nombreCliente,
@@ -128,7 +143,7 @@ export class RecibosPage implements OnInit {
   }
 
   async verificarVencimientosPendientes() {
-    const snap = await getDocs(collection(this.firestore, 'facturas'));
+    const snap = await getDocs(collection(this.db, 'facturas'));
     let count = 0;
     snap.forEach(d => {
       const data = d.data();
