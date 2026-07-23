@@ -7,6 +7,7 @@
       <p>Bienvenido de nuevo. Inicia sesión para continuar.</p>
     </div>
 
+    <!-- El formulario se conecta automáticamente con el FormGroup 'loginForm' del TypeScript -->
     <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
       
       <div class="input-wrapper">
@@ -31,7 +32,8 @@
 
       <ion-button expand="block" type="submit" [disabled]="!loginForm.valid" class="btn-primary ion-margin-top">
         <span class="btn-text">Ingresar</span>
-        <div class="btn-glow"></div> </ion-button>
+        <div class="btn-glow"></div> 
+      </ion-button>
     </form>
 
     <div class="auth-footer">

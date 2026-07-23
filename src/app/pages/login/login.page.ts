@@ -42,7 +42,7 @@ export class LoginPage implements OnInit {
   private alertCtrl = inject(AlertController);
 
   constructor() {
-    // Añadimos iconos útiles que seguro usarás en tus inputs de login
+    // Añadimos iconos útiles que usarás en tus inputs de login
     addIcons({ businessOutline, mailOutline, lockClosedOutline });
   }
 
@@ -65,7 +65,7 @@ export class LoginPage implements OnInit {
     const loading = await this.loadingCtrl.create({
       message: 'Iniciando sesión...',
       spinner: 'crescent',
-      cssClass: 'custom-loading' // Puedes usarlo para darle tu estilo oscuro si quieres
+      cssClass: 'custom-loading' 
     });
     await loading.present();
 
@@ -74,9 +74,6 @@ export class LoginPage implements OnInit {
       const userCredential = await this.authService.login(email, password);
       console.log('Login exitoso:', userCredential.user);
 
-      // Opcional: Si necesitas validar algo del perfil en Firestore justo al entrar
-      // const perfil = await this.authService.getPerfilUsuario(userCredential.user.uid);
-      
       // 3. Redirigir al Dashboard limpiando el historial
       await loading.dismiss();
       this.navCtrl.navigateRoot('/dashboard');
@@ -85,16 +82,20 @@ export class LoginPage implements OnInit {
       await loading.dismiss();
       console.error('Error al iniciar sesión:', error);
       
-      // 4. Manejar errores comunes de Firebase de forma amigable
-      this.mostrarError(error.code);
+      // 4. Mostrar alerta visual directa en el celular con el error exacto
+      const errorMessage = error.message || JSON.stringify(error);
+      const errorCode = error.code || 'Desconocido';
+
+      await this.mostrarError(errorCode, errorMessage);
     }
   }
 
   /**
    * Muestra una alerta interactiva traduciendo los errores típicos de Firebase Auth
+   * o mostrando el mensaje técnico si ocurre algo inusual en el celular.
    */
-  private async mostrarError(errorCode: string) {
-    let mensaje = 'Ha ocurrido un error inesperado. Inténtalo de nuevo.';
+  private async mostrarError(errorCode: string, rawMessage: string) {
+    let mensaje = 'Ha ocurrido un error inesperado al intentar iniciar sesión.';
 
     switch (errorCode) {
       case 'auth/invalid-credential':
@@ -109,7 +110,11 @@ export class LoginPage implements OnInit {
         mensaje = 'Esta cuenta de usuario ha sido deshabilitada.';
         break;
       case 'auth/network-request-failed':
-        mensaje = 'Error de conexión. Verifica tu conexión a internet.';
+        mensaje = 'Error de conexión. Verifica que tengas acceso a internet en el dispositivo.';
+        break;
+      default:
+        // Si es otro tipo de error de Firebase nativo, lo mostramos para depurar fácilmente en el celular
+        mensaje = `Detalle del error (${errorCode}): ${rawMessage}`;
         break;
     }
 
@@ -117,7 +122,7 @@ export class LoginPage implements OnInit {
       header: 'Error de Acceso',
       message: mensaje,
       buttons: ['Entendido'],
-      cssClass: 'custom-alert' // Útil si deseas estilizar la alerta con fondo oscuro
+      cssClass: 'custom-alert'
     });
 
     await alert.present();
