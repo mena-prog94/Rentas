@@ -67,7 +67,7 @@ export class LoginPage implements OnInit {
     await loading.present();
 
     try {
-      // Ajustado a los parámetros (correo, clave) que acepta tu AuthService funcional
+      // Conexión directa con el método login optimizado del AuthService
       const userCredential = await this.authService.login(email, password);
       console.log('Login exitoso:', userCredential.user);
 

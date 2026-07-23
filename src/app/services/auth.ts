@@ -24,12 +24,20 @@ export class AuthService {
   private auth = getAuth();
   private firestore = getFirestore();
 
-  // Observable para vigilar si el usuario inicia o cierra sesión en tiempo real
+  // Observable para vigilar si el usuario inicia o cierra sesión en tiempo real (Corregido el teardown de RxJS)
   user$: Observable<User | null> = new Observable(subscriber => {
-    const unsubscribe = onAuthStateChanged(this.auth, (currentUser) => {
-      subscriber.next(currentUser);
-    }, error => subscriber.error(error));
-    return { unsubscribe };
+    const unsubscribe = onAuthStateChanged(
+      this.auth, 
+      (currentUser) => {
+        subscriber.next(currentUser);
+      }, 
+      (error) => {
+        subscriber.error(error);
+      }
+    );
+    
+    // Retorno directo de la función de limpieza estándar para RxJS
+    return () => unsubscribe();
   });
 
   /**
