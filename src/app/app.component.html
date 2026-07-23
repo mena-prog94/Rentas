@@ -28,7 +28,8 @@
                 <ion-label>Registrar Nueva</ion-label> 
               </ion-item>
             </ion-menu-toggle>
-            <ion-menu-toggle [autoHide]="false" *ngFor="let viv of viviendas$ | async">
+            <!-- CORREGIDO: Se quitó '| async' -->
+            <ion-menu-toggle [autoHide]="false" *ngFor="let viv of viviendas">
               <ion-item [routerLink]="['/viviendas', viv.id]" routerLinkActive="active-item" lines="none" detail="false" class="submenu-item dynamic-item">
                 <ion-icon aria-hidden="true" slot="start" name="business-outline" class="item-icon-sub"></ion-icon>
                 <ion-label>
@@ -53,7 +54,8 @@
                 <ion-label>Registrar Nuevo</ion-label> 
               </ion-item>
             </ion-menu-toggle>
-            <ion-menu-toggle [autoHide]="false" *ngFor="let cliente of clientes$ | async">
+            <!-- CORREGIDO: Se quitó '| async' -->
+            <ion-menu-toggle [autoHide]="false" *ngFor="let cliente of clientes">
               <ion-item [routerLink]="['/clientes', cliente.id]" routerLinkActive="active-item" lines="none" detail="false" class="submenu-item dynamic-item">
                 <ion-icon aria-hidden="true" slot="start" name="person-outline" class="item-icon-sub"></ion-icon>
                 <ion-label>
@@ -64,7 +66,7 @@
             </ion-menu-toggle>
           </div> 
 
-          <!-- Recibos (Nuevo) -->
+          <!-- Recibos -->
           <ion-menu-toggle [autoHide]="false">
             <ion-item routerLink="/recibos" routerLinkActive="active-item" lines="none" detail="false">
               <ion-icon aria-hidden="true" slot="start" name="receipt-outline" color="primary"></ion-icon>
@@ -72,7 +74,7 @@
             </ion-item>
           </ion-menu-toggle>
 
-            <!-- Mi perfil-->
+          <!-- Mi perfil -->
           <ion-menu-toggle [autoHide]="false">
             <ion-item routerLink="/perfil" routerLinkActive="active-item" lines="none" detail="false">
               <ion-icon aria-hidden="true" slot="start" name="person-outline" color="primary"></ion-icon>
@@ -80,16 +82,14 @@
             </ion-item>
           </ion-menu-toggle>
 
-            <div class="welcome-header">
- 
-   <ion-menu-toggle>
-  <button (click)="realizarCierreSesion()" class="dashboard-logout-btn">
-    <ion-icon name="log-out-outline"></ion-icon>
-    <span>Cerrar Sesión</span>
-  </button>
-</ion-menu-toggle>
-  </div>
-
+          <div class="welcome-header">
+            <ion-menu-toggle>
+              <button (click)="realizarCierreSesion()" class="dashboard-logout-btn">
+                <ion-icon name="log-out-outline"></ion-icon>
+                <span>Cerrar Sesión</span>
+              </button>
+            </ion-menu-toggle>
+          </div>
 
           <hr class="menu-divider" *ngIf="appPages && appPages.length > 0" />
 

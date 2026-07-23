@@ -26,8 +26,8 @@ export class AuthService {
 
   // Observable para vigilar si el usuario inicia o cierra sesión en tiempo real
   user$: Observable<User | null> = new Observable(subscriber => {
-    const unsubscribe = onAuthStateChanged(this.auth, (user) => {
-      subscriber.next(user);
+    const unsubscribe = onAuthStateChanged(this.auth, (currentUser) => {
+      subscriber.next(currentUser);
     }, error => subscriber.error(error));
     return { unsubscribe };
   });
@@ -46,24 +46,24 @@ export class AuthService {
     try {
       // 1. Crear la cuenta en Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
-      const user = userCredential.user;
+      const usuarioRegistrado = userCredential.user;
 
       // 2. Actualizar el perfil básico del usuario en Auth
-      await updateProfile(user, {
+      await updateProfile(usuarioRegistrado, {
         displayName: nombreCompleto
       });
 
       // 3. Guardar datos extendidos en Firestore
-      const userDocRef = doc(this.firestore, `usuarios/${user.uid}`);
+      const userDocRef = doc(this.firestore, `usuarios/${usuarioRegistrado.uid}`);
       await setDoc(userDocRef, {
-        uid: user.uid,
+        uid: usuarioRegistrado.uid,
         nombreCompleto,
         email,
         rol: 'administrador',
         createdAt: new Date()
       });
 
-      return user;
+      return usuarioRegistrado;
     } catch (error) {
       throw error;
     }

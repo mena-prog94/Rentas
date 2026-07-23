@@ -1,11 +1,11 @@
-import { Component, OnInit, inject, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { 
   IonContent, IonList, IonBadge, IonButton, IonButtons, IonIcon, 
   IonCard, IonCardContent, AlertController, IonTitle, 
-  IonBackButton, IonToolbar, IonHeader, ToastController
-  
+  IonBackButton, IonToolbar, IonHeader, ToastController,
+  IonItem, IonLabel, IonNote // <--- Añadidos para evitar errores si los usas en el HTML
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { receiptOutline, cashOutline, alertCircleOutline, eyeOutline } from 'ionicons/icons';
@@ -16,24 +16,38 @@ import { getFirestore, collection, doc, updateDoc, getDocs, addDoc, getDoc, onSn
 @Component({
   selector: 'app-recibos',
   templateUrl: './recibos.page.html',
+  styleUrls: ['./recibos.page.scss'], // <--- Añadido por buenas prácticas si usas estilos
   standalone: true,
   imports: [
-    CommonModule, IonContent, IonList, IonBadge, IonButton, IonButtons, IonIcon, 
-    IonCard, IonCardContent, IonTitle, IonBackButton, IonToolbar, IonHeader
-    
+    CommonModule, 
+    IonContent, 
+    IonList, 
+    IonBadge, 
+    IonButton, 
+    IonButtons, 
+    IonIcon, 
+    IonCard, 
+    IonCardContent, 
+    IonTitle, 
+    IonBackButton, 
+    IonToolbar, 
+    IonHeader
+         // <--- Vital si usas ion-note en tu HTML
   ]
 })
 export class RecibosPage implements OnInit, OnDestroy {
   // Instancia de Firestore clásica
   private db = getFirestore();
-  private alertController = inject(AlertController);
-  private toastCtrl = inject(ToastController);
-  private router = inject(Router);
-
+  
+  // Inyecciones de dependencias limpias
   recibos: any[] = [];
   private unsubscribe: any = null;
 
-  constructor() {
+  constructor(
+    private alertController: AlertController,
+    private toastCtrl: ToastController,
+    private router: Router
+  ) {
     addIcons({ receiptOutline, cashOutline, alertCircleOutline, eyeOutline });
   }
 
@@ -83,7 +97,8 @@ export class RecibosPage implements OnInit, OnDestroy {
                 await this.generarFacturaMensualTrasDeposito(recibo);
                 const toast = await this.toastCtrl.create({ 
                   message: 'Depósito registrado y factura mensual generada.', 
-                  duration: 3000, color: 'success' 
+                  duration: 3000, 
+                  color: 'success' 
                 });
                 await toast.present();
               }
@@ -153,7 +168,12 @@ export class RecibosPage implements OnInit, OnDestroy {
       }
     });
     if (count > 0) {
-      const toast = await this.toastCtrl.create({ message: `¡Atención! ${count} recibo(s) por vencer.`, duration: 5000, color: 'warning', position: 'top' });
+      const toast = await this.toastCtrl.create({ 
+        message: `¡Atención! ${count} recibo(s) por vencer.`, 
+        duration: 5000, 
+        color: 'warning', 
+        position: 'top' 
+      });
       await toast.present();
     }
   }

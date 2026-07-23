@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { 
@@ -12,9 +12,10 @@ import {
   addOutline, peopleOutline, personAddOutline, businessOutline, 
   personOutline, receiptOutline, logOutOutline 
 } from 'ionicons/icons';
-import { Firestore, collection, collectionData } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
-import { Auth, signOut } from '@angular/fire/auth';
+
+// Importaciones del SDK clásico de Firebase
+import { getFirestore, collection, onSnapshot } from 'firebase/firestore';
+import { getAuth, signOut } from 'firebase/auth';
 
 @Component({
   selector: 'app-root',
@@ -27,18 +28,25 @@ import { Auth, signOut } from '@angular/fire/auth';
     IonMenuToggle, IonRouterOutlet
   ]
 })
-export class AppComponent implements OnInit {
-  // 1. DEFINIR LA PROPIEDAD QUE FALTA
+export class AppComponent implements OnInit, OnDestroy {
   appPages: any[] = []; 
   
   mostrarViviendasRegistradas = false;
   mostrarClientesRegistrados = false; 
-  viviendas$!: Observable<any[]>;
-  clientes$!: Observable<any[]>;
   
-  private firestore = inject(Firestore);
-  private auth = inject(Auth);
-  private router = inject(Router); 
+  // Arrays normales para que funcionen directo en el HTML sin el pipe async
+  viviendas: any[] = [];
+  clientes: any[] = [];
+
+  // Instancias del SDK clásico
+  private db = getFirestore();
+  private auth = getAuth();
+
+  private unsubViviendas: any = null;
+  private unsubClientes: any = null;
+  
+  // Inyecciones correctas usando inject()
+  private router = inject(Router);
   private menuCtrl = inject(MenuController);
   private alertCtrl = inject(AlertController);
 
@@ -51,12 +59,22 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    // 2. CORRECCIÓN DE FIRESTORE: Pasa solo el firestore y el nombre de la colección
-    const viviendasRef = collection(this.firestore, 'viviendas');
-    this.viviendas$ = collectionData(viviendasRef, { idField: 'id' });
+    // Escuchar viviendas en tiempo real con el SDK clásico
+    const viviendasRef = collection(this.db, 'viviendas');
+    this.unsubViviendas = onSnapshot(viviendasRef, (snapshot) => {
+      this.viviendas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    });
 
-    const clientesRef = collection(this.firestore, 'clientes');
-    this.clientes$ = collectionData(clientesRef, { idField: 'id' });
+    // Escuchar clientes en tiempo real con el SDK clásico
+    const clientesRef = collection(this.db, 'clientes');
+    this.unsubClientes = onSnapshot(clientesRef, (snapshot) => {
+      this.clientes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.unsubViviendas) this.unsubViviendas();
+    if (this.unsubClientes) this.unsubClientes();
   }
 
   async realizarCierreSesion() {

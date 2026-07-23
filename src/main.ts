@@ -1,35 +1,24 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { AppComponent } from './app/app.component';
-import { provideRouter } from '@angular/router';
+import { RouteReuseStrategy, provideRouter, withPreloading, PreloadAllModules } from '@angular/router';
+import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
+import { provideHttpClient } from '@angular/common/http';
 import { routes } from './app/app.routes';
+import { AppComponent } from './app/app.component';
 
-// Proveedor de Ionic Standalone
-import { provideIonicAngular } from '@ionic/angular/standalone';
-
-// Importaciones oficiales de AngularFire
-import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
-import { getAuth, provideAuth } from '@angular/fire/auth';
-import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+// Importación del SDK clásico de Firebase
+import { initializeApp } from 'firebase/app';
 import { environment } from './environments/environment';
 
-// Importación opcional de Analytics para evitar errores si no se usa con provider
-import { getAnalytics, provideAnalytics } from '@angular/fire/analytics';
+// Inicializar Firebase globalmente para todo el SDK clásico
+export const app = initializeApp(environment.firebase);
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideRouter(routes),
-    
-    // Inicialización de Ionic
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular({
-      mode: 'md'
+      mode: 'md' // Mantiene tu preferencia visual de Material Design
     }),
-
-    // Inicialización correcta de Firebase con AngularFire
-    provideFirebaseApp(() => initializeApp(environment.firebase)),
-    provideAuth(() => getAuth()),
-    provideFirestore(() => getFirestore()),
-    
-    // Añadido por si quieres mantener Analytics de forma limpia en standalone:
-    provideAnalytics(() => getAnalytics())
+    provideRouter(routes, withPreloading(PreloadAllModules)),
+    provideHttpClient()
   ]
 }).catch(err => console.error(err));
