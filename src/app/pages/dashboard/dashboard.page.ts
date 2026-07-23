@@ -9,7 +9,9 @@ import {
 import { addIcons } from 'ionicons';
 import { peopleOutline, homeOutline, personOutline, logOutOutline, receiptOutline } from 'ionicons/icons';
 import { AuthService } from '../../services/auth';
-import { user } from '@angular/fire/auth';
+
+// Importación correcta de Firebase Auth (SDK clásico)
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 // Importación correcta del SDK clásico de Firebase Firestore
 import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore';
@@ -29,8 +31,9 @@ export class DashboardPage implements OnInit {
   private navCtrl = inject(NavController);
   private loadingCtrl = inject(LoadingController);
 
-  // Instancia de Firestore clásica
+  // Instancias del SDK clásico
   private db = getFirestore();
+  private auth = getAuth();
 
   userName: string = 'Administrador';
   totalPropiedades = 0;
@@ -47,8 +50,8 @@ export class DashboardPage implements OnInit {
   }
 
   obtenerUsuario() {
-    const authInstance = this.authService['auth']; 
-    user(authInstance).subscribe((u) => {
+    // Escuchar el estado de autenticación con el SDK clásico de Firebase
+    onAuthStateChanged(this.auth, (u) => {
       if (u) {
         this.userName = u.displayName || u.email?.split('@')[0] || 'Administrador';
       }
