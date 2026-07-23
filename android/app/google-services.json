@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "5259246865",
+    "project_id": "rentasapp-927e8",
+    "storage_bucket": "rentasapp-927e8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:5259246865:android:b847337b4357e3bbec60b0",
+        "android_client_info": {
+          "package_name": "io.ionic.starter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "5259246865-4e94d4i2aj1aflm05sc0or845g1tqpc6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFjaHRqmw0B2JpLrjfas_xYqvDThGcd3s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "5259246865-4e94d4i2aj1aflm05sc0or845g1tqpc6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
